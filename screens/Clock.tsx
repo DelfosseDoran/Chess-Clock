@@ -1,17 +1,19 @@
 import React, { useState } from 'react'
 import { View, Text, Dimensions, Pressable } from 'react-native'
 import { StyleSheet } from 'react-native'
-import Svg, { Circle, Path, Rect } from 'react-native-svg'
+// import Svg, { Circle, Path, Rect } from 'react-native-svg'
 import Player from '../Component/Player'
 import { useAtom } from 'jotai'
-import { activeAtom, timeAtom } from '../jodai'
+import { activeAtom, pauseAtom, timeAtom } from '../jodai'
 import { useFonts } from 'expo-font'
 import * as SplashScreen from 'expo-splash-screen'
 import { useCallback } from 'react'
+import { Pause, Play, RefreshCcw } from 'lucide-react-native'
 
 const screenOptions: StackNavigationOptions = { headerShown: false }
 
 export default () => {
+  const [pauze, setPauze] = useAtom(pauseAtom)
   const [active, setActive] = useAtom(activeAtom)
   const [time, setTime] = useAtom(timeAtom)
   const [fontsLoaded] = useFonts({
@@ -26,41 +28,35 @@ export default () => {
   if (!fontsLoaded) {
     return null
   }
+
+  const Playing = () => {
+    if (pauze === 'play') 
+    {return <Pause color='black'/>}
+    else {return <Play color='black'/>}
+  }
   return (
-    <View >
+    <View>
       <Player player={'Top'} />
       <Player player={'Bot'} />
       <View style={styles.containerSvg}>
-        <Pressable style={styles.circlesvg} onPress={()=>{setActive('')}}>
-          <Svg
-            style={styles.svg}
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            strokeWidth="3.5"
-            strokeLinecap="square"
-            strokeLinejoin="round"
-          >
-            <Rect x="6" y="4" width="4" height="16"></Rect>
-            <Rect x="14" y="4" width="4" height="16"></Rect>
-          </Svg>
+        <Pressable
+          style={styles.circlesvg}
+          onPress={() => {
+            if (pauze === 'play') setPauze('pauze')
+            else setPauze('play')
+          }}
+        >
+          <Playing />
         </Pressable>
         <Pressable
           onPress={() => {
             setTime({ Top: 60 * 10, Bot: 60 * 10 })
             setActive('')
+            setPauze('play')
           }}
           style={styles.circlesvg}
         >
-          <Svg
-            style={styles.svg}
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            strokeWidth="3.5"
-            strokeLinecap="square"
-            strokeLinejoin="round"
-          >
-            <Path d="M2.5 2v6h6M2.66 15.57a10 10 0 1 0 .57-8.38" />
-          </Svg>
+          <RefreshCcw color='black'/>
         </Pressable>
       </View>
     </View>
